@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Round link</title>
+		<style>
+			.round-link {
+				display: inline-block;
+				width: 46px;
+				height: 46px;
+				position: relative;
+			}
+			.round-link a {
+				display: inline-block;
+				width: 32px;
+				height: 32px;
+				position: absolute;
+				top: 7px;
+				left: 7px;
+				border-radius: 32px;
+				background-color: green;
+				color: white;
+				text-align: center;
+				text-decoration: none;
+				line-height: 32px;
+			}
+			.round-link:hover a {
+				width: 46px;
+				height: 46px;
+				top: 0;
+				left: 0;
+				border-radius: 46px;
+				line-height: 46px;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<div class="round-link"><a href="#">A</a></div>
+			<div class="round-link"><a href="#">Ab</a></div>
+			<div class="round-link"><a href="#">Abc</a></div>
+		</div>
+	</body>
+</html>

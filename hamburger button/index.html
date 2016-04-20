@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Hamburger button</title>
+		<script src="jquery-1.11.3.min.js"></script>
+		<style>
+            
+            .button {
+                position: relative;
+                width: 75px;
+                height: 75px;
+                border: 1px solid silver;
+                border-radius: 5px;
+                box-sizing: border-box;
+                padding: 20px;
+            }
+            .button:hover {
+                cursor: pointer;
+            }
+            .button > div {
+                position: relative;
+                height: 3px;
+                background-color: gray;
+                margin-bottom: 10px;
+            }
+            .close { }
+		</style>
+		<script>
+            
+            var AnimateConfig = {
+                open: {
+                    div1Rotate: 0,
+                    div1Top: 0,
+                    div2Opacity: 1,
+                    div3Rotate: 0,
+                    div3Top: 0
+                },
+                close: {
+                    div1Rotate: 45,
+                    div1Top: 14,
+                    div2Opacity: 0,
+                    div3Rotate: -45,
+                    div3Top: -12
+                }
+            };
+            
+            function onButtonClick() {
+                
+                var button = $(this);
+                
+                button.toggleClass('close');
+                
+                if (button.hasClass('close')) {
+                    animateButton(button, AnimateConfig.open, AnimateConfig.close);
+                } else {
+                    animateButton(button, AnimateConfig.close, AnimateConfig.open);
+                }
+                
+            }
+            
+            function animateButton(button, start, end) {
+                
+                var div1 = button.find('div:nth-child(1)'),
+                    div2 = button.find('div:nth-child(2)'),
+                    div3 = button.find('div:nth-child(3)');
+                
+                $( $.extend({}, start) ).animate( $.extend({}, end) , {
+                    step: function(now, anim) {
+                        switch (anim.prop) {
+                            case 'div1Rotate':
+                                div1.css('transform', 'rotate(' + now + 'deg)');
+                                break;
+                            case 'div1Top': 
+                                div1.css('top', now + 'px');
+                                break;
+                            case 'div2Opacity':
+                                div2.css('opacity', now);
+                                break;
+                            case 'div3Rotate':
+                                div3.css('transform', 'rotate(' + now + 'deg)');
+                                break;
+                            case 'div3Top':
+                                div3.css('top', now + 'px');
+                                break;
+                        }
+                    }
+                });
+                
+            }
+            
+            $(function() {
+                $('.button').click(onButtonClick);
+            });
+            
+		</script>
+	</head>
+	<body>
+		<div class="button">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+	</body>
+</html>

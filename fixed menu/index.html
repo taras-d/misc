@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Fixed menu</title>
+		<script src="jquery-1.11.3.min.js"></script>
+		<style>
+			* {
+				font-family: verdana, sans-serif;
+			}
+			#menu {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				height: 75px;
+				background-color: gray;
+				padding: 0 20px;
+				color: white;
+			}
+			#menu .menu-title {
+				position: absolute;
+				display: inline-block;
+				top: 15px;
+				left: 15px;
+				font-size: 30px;
+				font-weight: bold;
+			}
+			#menu .menu-items {
+				position: absolute;
+				display: inline-block;
+				top: 15px;
+				right: 100px;
+				margin: 15px;
+				padding: 0;
+				list-style-type: none;
+			}
+			#menu .menu-items li {
+				display: inline-block;
+				min-width: 75px;
+			}
+			#menu .menu-items li:hover {
+				cursor: pointer;
+			}
+			#menu.minimized {
+				height: 40px;
+			}
+			#menu.minimized .menu-title {
+				top: 4px;
+				font-size: 25px;
+			}
+			#menu.minimized .menu-items {
+				top: -4px;
+				font-size: 14px;
+			}
+			#content {
+				height: 3000px;
+				width: 600px;
+				margin: 80px auto 0 auto;
+				border: 1px dashed gray;
+				padding: 10px;
+				color: gray;
+			}
+		</style>
+		<script>
+			$(window).on('scroll', function() {
+				var scrollTop = $(this).scrollTop();
+				if (scrollTop >= 50) {
+					$('#menu').addClass('minimized');
+				} else {
+					$('#menu').removeClass('minimized');
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<div id="menu">
+			<div class="menu-title">Site</div>
+			<ul class="menu-items">
+				<li>Home</li>
+				<li>About</li>
+				<li>Contact</li>
+			</ul>
+		</div>
+		<div id="content">Content</div>
+	</body>
+</html>

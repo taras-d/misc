@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Floating menu</title>
+		<script src="jquery-1.11.3.min.js"></script>
+		<style>
+			* {
+				font-family: verdana, sans-serif;
+			}
+			.block {
+				width: 600px;
+				padding: 5px;
+				border-style: dashed;
+				border-width: 1px;
+				border-radius: 5px;
+				margin-bottom: 15px;
+				margin: 0 auto 15px auto;
+				font-weight: bold;
+			}
+			.home {
+				height: 600px;
+				border-color: green;
+				color: green;
+			}
+			.about {
+				height: 500px;
+				border-color: orange;
+				color: orange;
+			}
+			.contact {
+				height: 700px;
+				border-color: blue;
+				color: blue;
+			}
+			#menu {
+				position: absolute;
+				top: 200px;
+				left: 100px;
+				border: 1px solid gray;
+				background-color: white;
+			}
+			#menu ul {
+				list-style-type: none;
+				margin: 0;
+				padding: 15px;
+				width: 150px;
+				text-align: center;
+			}
+			#menu ul li {
+				font-weight: bold;
+				border-bottom: 1px solid gray;
+				color: gray;
+				padding: 5px;
+			}
+			#menu ul li:hover {
+				color: black;
+				border-bottom-color: black;
+				cursor: pointer;
+			}
+		</style>
+		<script>
+			var menuOffsetTop;
+			$(document).ready(function() {
+				menuOffsetTop = $('#menu').offset().top;
+				$('#menu ul li').click(function() {
+					var target = $( $(this).attr('data-target') );
+					if (target.length > 0) {
+						$('html, body').animate({
+							scrollTop: target.offset().top - 2,
+						}, {
+							duration: 500,
+							queue: false
+						});
+					}
+				});
+			});
+			$(window).scroll(function() {
+				$('#menu').animate({ 
+					top: menuOffsetTop + $(window).scrollTop() + 'px'					
+				}, { 
+					duration: 500, 
+					queue: false 
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div class="block home">Home</div>
+		<div class="block about">About</div>
+		<div class="block contact">Contact</div>
+		<div id="menu">
+			<ul>
+				<li data-target=".home">Home</li>
+				<li data-target=".about">About</li>
+				<li data-target=".contact">Contact</li>
+			</ul>
+		</div>
+	</body>
+</html>
