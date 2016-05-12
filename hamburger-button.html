@@ -2,9 +2,9 @@
 <html>
 	<head>
 		<title>Hamburger button</title>
-		<script src="jquery-1.11.3.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
 		<style>
-            
+
             .button {
                 position: relative;
                 width: 75px;
@@ -26,7 +26,7 @@
             .close { }
 		</style>
 		<script>
-            
+
             var AnimateConfig = {
                 open: {
                     div1Rotate: 0,
@@ -43,34 +43,34 @@
                     div3Top: -12
                 }
             };
-            
+
             function onButtonClick() {
-                
+
                 var button = $(this);
-                
+
                 button.toggleClass('close');
-                
+
                 if (button.hasClass('close')) {
                     animateButton(button, AnimateConfig.open, AnimateConfig.close);
                 } else {
                     animateButton(button, AnimateConfig.close, AnimateConfig.open);
                 }
-                
+
             }
-            
+
             function animateButton(button, start, end) {
-                
+
                 var div1 = button.find('div:nth-child(1)'),
                     div2 = button.find('div:nth-child(2)'),
                     div3 = button.find('div:nth-child(3)');
-                
+
                 $( $.extend({}, start) ).animate( $.extend({}, end) , {
                     step: function(now, anim) {
                         switch (anim.prop) {
                             case 'div1Rotate':
                                 div1.css('transform', 'rotate(' + now + 'deg)');
                                 break;
-                            case 'div1Top': 
+                            case 'div1Top':
                                 div1.css('top', now + 'px');
                                 break;
                             case 'div2Opacity':
@@ -85,13 +85,13 @@
                         }
                     }
                 });
-                
+
             }
-            
+
             $(function() {
                 $('.button').click(onButtonClick);
             });
-            
+
 		</script>
 	</head>
 	<body>
