@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Google Map Geocoder</title>
+
+        <!-- Google Maps Api -->
+        <script src="http://maps.googleapis.com/maps/api/js"></script>
+
+        <style>
+            #map {
+                margin: 10px 0;
+                width: 800px;
+                height: 600px;
+                border: 1px solid silver;
+            }
+        </style>
+
+        <script>
+
+            var addressEl,
+                buttonEl,
+                mapEl,
+                statusEl;
+
+            var map,
+                geocoder;
+
+            function init() {
+
+                addressEl = document.getElementById('address');
+                buttonEl = document.getElementById('show');
+                mapEl = document.getElementById('map');
+                statusEl = document.getElementById('status');
+
+                buttonEl.addEventListener('click', showAddress);
+
+                initMap();
+
+            }
+
+            function initMap() {
+
+                var mapConfig = {
+                    center: new google.maps.LatLng(49.5360513, 12.9363672),
+                    zoom: 5,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+
+                map = new google.maps.Map(mapEl, mapConfig);
+
+                geocoder = new google.maps.Geocoder();
+
+            }
+
+            function showAddress() {
+
+                statusEl.innerHTML = '';
+
+                var address = addressEl.value;
+                if (!address) {
+                    return;
+                }
+
+                geocoder.geocode({ address: address }, function(results, status) {
+
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        map.setCenter(results[0].geometry.location);
+                        map.fitBounds(results[0].geometry.viewport);
+                    } else {
+                        statusEl.innerHTML = status;
+                    }
+
+                });
+
+            }
+
+            window.onload = init;
+
+        </script>
+
+	</head>
+	<body>
+
+        Address: <input type="text" id="address"> <button id="show">Show</button>
+
+        <div id="map"></div>
+
+        <div id="status"></div>
+
+	</body>
+</html>

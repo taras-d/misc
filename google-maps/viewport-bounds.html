@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>Google Maps Viewport bounds</title>
+
+        <!-- Google Maps API -->
+        <script src="http://maps.googleapis.com/maps/api/js"></script>
+
+        <style>
+            #map {
+                height: 300px;
+                width: 300px;
+                float: left;
+            }
+            .countries-wrap {
+                margin-left: 310px;
+            }
+        </style>
+
+    </head>
+    <body>
+
+        <div id="map"></div>
+
+        <div class="countries-wrap">
+            <div><b>Countries (markers) in map viewport:</b></div>
+            <div id="countries"></div>
+        </div>
+
+        <script>
+
+            var map,
+                markers = [];
+
+            var countryCoords = [
+                {
+                    name: 'Sweden',
+                    lat: 60.128161,
+                    lng: 18.643501
+                },
+                {
+                    name: 'Finland',
+                    lat: 61.92411,
+                    lng: 25.748151
+                },
+                {
+                    name: 'Norway',
+                    lat: 60.472024,
+                    lng: 8.468946
+                },
+                {
+                    name: 'Belarus',
+                    lat: 53.709807,
+                    lng: 27.953389
+                },
+                {
+                    name: 'Ukraine',
+                    lat: 48.379433,
+                    lng: 31.16558
+                },
+                {
+                    name: 'Romania',
+                    lat: 45.943161,
+                    lng: 24.96676
+                },
+                {
+                    name: 'Turkey',
+                    lat: 38.963745,
+                    lng: 35.243322
+                },
+                {
+                    name: 'Greece',
+                    lat: 39.074208,
+                    lng: 21.824312
+                },
+                {
+                    name: 'Italy',
+                    lat: 41.87194,
+                    lng: 12.56738
+                },
+                {
+                    name: 'Austria',
+                    lat: 47.516231,
+                    lng: 14.550072
+                },
+                {
+                    name: 'Poland',
+                    lat: 51.919438,
+                    lng: 19.145136
+                },
+                {
+                    name: 'Denmark',
+                    lat: 56.26392,
+                    lng: 9.501785
+                },
+                {
+                    name: 'Germany',
+                    lat: 51.165691,
+                    lng: 10.451526
+                },
+                {
+                    name: 'France',
+                    lat: 46.227638,
+                    lng: 2.213749
+                },
+                {
+                    name: 'Spain',
+                    lat: 40.463667,
+                    lng: -3.74922
+                },
+                {
+                    name: 'Portugal',
+                    lat: 39.399872,
+                    lng: -8.224454
+                },
+                {
+                    name: 'United Kingdom',
+                    lat: 55.378051,
+                    lng: -3.435973
+                },
+                {
+                    name: 'Ireland',
+                    lat: 53.41291,
+                    lng: -8.24389
+                }
+            ];
+
+            function init() {
+
+                renderMap();
+                renderMarkers();
+
+            }
+
+            function renderMap() {
+
+                var element = document.getElementById('map'),
+                    center = new google.maps.LatLng(48.0185416, 14.641471,17);
+
+                var options = {
+                    zoom: 5,
+                    center: center
+                };
+
+                map = new google.maps.Map(element, options);
+
+                //map.addListener('bounds_changed', mapBoundsChanged);
+                map.addListener('idle', mapBoundsChanged);
+
+            }
+
+            function renderMarkers() {
+
+                for (var i = 0; i < countryCoords.length; ++i) {
+                    markers.push(
+                        new google.maps.Marker({
+                            position: new google.maps.LatLng({
+                                lat: countryCoords[i].lat,
+                                lng: countryCoords[i].lng
+                            }),
+                            map: map
+                        })
+                    );
+                }
+
+            }
+
+            function mapBoundsChanged() {
+
+                var bounds = map.getBounds(),
+                    southWest = bounds.getSouthWest().toJSON(),
+                    northEast = bounds.getNorthEast().toJSON();
+
+                displayCountries(
+                    southWest.lat,
+                    northEast.lat,
+                    southWest.lng,
+                    northEast.lng
+                );
+
+            }
+
+            function displayCountries(latMin, latMax, lngMin, lngMax) {
+
+                var country,
+                    countriesHtml = '',
+                    countriesEl = document.getElementById('countries'),
+                    i = 0;
+
+                countriesEl.innerHTML = '';
+
+                for (i = 0; i < countryCoords.length; ++i) {
+
+                    country = countryCoords[i];
+
+                    if (country.lat >= latMin && country.lat <= latMax &&
+                        country.lng >= lngMin && country.lng <= lngMax) {
+
+                        countriesHtml += country.name + '<br>';
+
+                    }
+
+                }
+
+                countriesEl.innerHTML = countriesHtml;
+
+            }
+
+            window.onload = init;
+
+        </script>
+
+    </body>
+</html>

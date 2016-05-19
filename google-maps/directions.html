@@ -2,98 +2,101 @@
 <html>
 	<head>
 		<title>Google Map Directions</title>
-        
+
         <!-- Google Maps Api -->
         <script src="http://maps.googleapis.com/maps/api/js"></script>
-        
+
         <style>
-            
+
             #map {
                 margin: 10px 0;
                 width: 1000px;
                 height: 800px;
                 border: 1px solid silver;
             }
-            
+
         </style>
-        
+
         <script>
-            
+
             var fromEl,
-                topEl,
+                toEl,
                 buttonEl,
                 mapEl,
-                errorEl;
-            
+                statusEl;
+
             var map,
                 directionsService,
                 directionsRenderer;
-            
+
             function init() {
-                
+
                 fromEl = document.getElementById('from');
                 toEl = document.getElementById('to');
                 buttonEl = document.getElementById('show');
                 mapEl = document.getElementById('map');
-                errorEl = document.getElementById('error');
-                
+                statusEl = document.getElementById('status');
+
                 buttonEl.addEventListener('click', showDirection);
-                
+
                 initMap();
-                
+
             }
-            
+
             function initMap() {
-                
+
                 var mapConfig = {
-                    center: new google.maps.LatLng(49.8268237, 24.040374),
-                    zoom: 10,
+                    center: new google.maps.LatLng(49.5360513, 12.9363672),
+                    zoom: 5,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
-                
+
                 map = new google.maps.Map(mapEl, mapConfig);
-                
+
                 directionsService = new google.maps.DirectionsService();
                 directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
-                
+
             }
-            
+
             function showDirection() {
-                
-                errorEl.innerHTML = '';
-                
+
+                statusEl.innerHTML = '';
+
                 var origin = fromEl.value,
                     destination = toEl.value;
-                
+
+				if (!origin || !destination) {
+					return;
+				}
+
                 directionsService.route({
                     origin: origin,
                     destination: destination,
                     travelMode: google.maps.TravelMode.DRIVING
                 }, function(response, status) {
-                   
-                    if (status != google.maps.DirectionsStatus.OK) {
-                        errorEl.innerHTML = "Can't show direction: " + origin + " -> " + destination;
-                        return;
-                    }
-                    
-                    directionsRenderer.setDirections(response);
-                    
+
+                    if (status == google.maps.DirectionsStatus.OK) {
+                        directionsRenderer.setDirections(response);
+                    } else {
+						statusEl.innerHTML = status;
+					}
+
                 });
-                
+
             }
-            
+
             window.onload = init;
-            
+
         </script>
-        
+
 	</head>
 	<body>
-        
+
         From <input type="text" id="from"> to <input type="text" id="to"> <button id="show">Show</button>
-        
+
         <div id="map"></div>
-        
-        <div id="error"></div>
-        
+
+        <div id="status"></div>
+
 	</body>
 </html>

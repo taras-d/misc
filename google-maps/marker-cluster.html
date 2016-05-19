@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>Google Maps Marker clusters</title>
+
+        <!-- Google Maps API -->
+        <script src="http://maps.googleapis.com/maps/api/js"></script>
+
+        <!-- Marker Clusterer -->
+        <!-- https://github.com/googlemaps/js-marker-clusterer.git -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/js-marker-clusterer/1.0.0/markerclusterer_compiled.js"></script>
+
+        <style>
+            #map {
+                height: 600px;
+                width: 600px;
+            }
+        </style>
+
+    </head>
+    <body>
+
+        <div id="map"></div>
+
+        <script>
+
+            var map,
+                markers = [];
+
+            function init() {
+
+                renderMap();
+                renderMarkers();
+                renderMarkersClusters();
+
+            }
+
+            function renderMap() {
+
+                var element = document.getElementById('map'),
+                    center = new google.maps.LatLng(48.0185416, 14.641471,17);
+
+                var options = {
+                    zoom: 3,
+                    center: center
+                };
+
+                map = new google.maps.Map(element, options);
+
+            }
+
+            function renderMarkers() {
+
+                var markersData = generateMarkersData();
+
+                for (var i = 0; i < markersData.length; ++i) {
+                    markers.push(
+                        new google.maps.Marker({
+                            position: new google.maps.LatLng( markersData[i] ),
+                            map: map,
+                            icon: 'img/marker.png'
+                        })
+                    );
+                }
+
+            }
+
+            function renderMarkersClusters() {
+
+                var options = {
+                    styles: [{
+                        height: 54,
+                        width: 54,
+                        url: 'img/cluster-icon-small.png',
+                        textColor: 'white'
+                    }, {
+                        height: 84,
+                        width: 84,
+                        url: 'img/cluster-icon-big.png',
+                        textColor: 'white'
+                    }]
+                };
+
+                markerCluster = new MarkerClusterer(map, markers, options);
+
+            }
+
+            function generateMarkersData() {
+
+                function random(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                var markers = [],
+                    count = 100;
+
+                for (var i = 0; i < count; ++i) {
+                    markers.push({
+                        lat: random(40, 60),
+                        lng: random(-15, 45)
+                    });
+                }
+
+                return markers;
+
+            }
+
+            window.onload = init;
+
+        </script>
+
+    </body>
+</html>
