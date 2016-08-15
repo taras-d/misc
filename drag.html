@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>Drag</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+        <style>
+            .sandbox {
+                height: 500px;
+                border: 1px dotted silver;
+                position: relative;
+                overflow: auto;
+            }
+            .box {
+                width: 100px;
+                height: 100px;
+                background-color: green;
+                position: absolute;
+                cursor: pointer;
+                opacity: 0.9;
+            }
+            .box.drag {
+                box-shadow: 0 0 15px red;
+            }
+            .box.top {
+                z-index: 1;
+            }
+            #b2 {
+                background-color: blue;
+                top: 110px;
+            }
+            #b3 {
+                background-color: orange;
+                top: 220px;
+            }
+            #b4 {
+                background-color: gray;
+                top: 330px;
+            }
+        </style>
+
+    </head>
+    <body>
+
+        <div class="sandbox">
+            <div class="box" id="b1"></div>
+            <div class="box" id="b2"></div>
+            <div class="box" id="b3"></div>
+            <div class="box" id="b4"></div>
+        </div>
+
+        <script>
+
+            var $sandbox = $('.sandbox'),
+                $box = $sandbox.find('.box'),
+                $dragBox = null;
+
+            $sandbox.on('mousedown', function(event) {
+                var target = $(event.target);
+                if (target.is('.box')) {
+                    $dragBox = $(event.target);
+                    $box.removeClass('top');
+                    $dragBox.addClass('drag top');
+                    $dragBox.data('offsetX', event.offsetX);
+                    $dragBox.data('offsetY', event.offsetY);
+                    save();
+                }
+            });
+
+            $sandbox.on('mouseup', function(event) {
+                if ($dragBox) {
+                    $dragBox.removeClass('drag');
+                    $dragBox = null;
+                }
+            });
+
+            $sandbox.on('mousemove', function(event) {
+                if (!$dragBox) {
+                    return;
+                }
+                $dragBox.css({
+                    left: event.clientX - $dragBox.data('offsetX'),
+                    top: event.clientY - $dragBox.data('offsetY')
+                });
+                save();
+            });
+
+            function getSandboxHistory() {
+                try {
+                    var json = localStorage.getItem('sandbox');
+                    if (!json) {
+                        return {};
+                    }
+                    return JSON.parse( localStorage.getItem('sandbox') );
+                } catch(e) {
+                    return {};
+                }
+            }
+
+            function setSandboxHistory(data) {
+                localStorage.setItem('sandbox', JSON.stringify(data));
+            }
+
+            function save() {
+                var sandbox = getSandboxHistory();
+                $box.each(function() {
+                    var el = $(this);
+                    sandbox[el.attr('id')] = {
+                        top: el.css('top'),
+                        left: el.css('left'),
+                        isTop: el.hasClass('top')
+                    };
+                });
+                setSandboxHistory(sandbox);
+            }
+
+            function restore() {
+                var sandbox = getSandboxHistory(),
+                    box;
+                $box.removeClass('top');
+                for (var id in sandbox) {
+                    box = $('#' + id).css({
+                        left: sandbox[id].left,
+                        top: sandbox[id].top
+                    });
+                    box.toggleClass('top', sandbox[id].isTop);
+                }
+            }
+
+            $(window).on('storage', function(event) {
+                if (event.originalEvent.key == 'sandbox') {
+                    restore();
+                }
+            });
+
+            restore();
+
+        </script>
+
+    </body>
+</html>
