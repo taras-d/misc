@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Vue.js Todo app</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://vuejs.org/js/vue.js"></script>
+        <style>
+            #app {
+                max-width: 300px;
+                margin: 0 auto;
+                font-family: sans-serif;
+                font-size: 16px;
+                text-align: center;
+            }
+            #app .empty {
+                color: silver;
+                font-size: 14px;
+            }
+            #app input[type="checkbox"]:checked + input[type="text"] {
+                color: green;
+                text-decoration: line-through;
+            }
+        </style>
+    </head>
+    <body>
+        
+        <div id="app">
+            <h3>Vue.js Todo app</h3>
+            <div class="empty" v-if="!items || items.length === 0">woohoo! nothing to do ;)</div>
+            <div v-for="(item, index) in items" v-bind:title="item.date">
+                <input type="checkbox" v-model="item.checked">
+                <input type="text" v-model="item.text">
+                <button v-on:click="onDelete(item, index)">x</button>
+            </div>
+            <p>
+                <input type="text" placeholder="Add todo" v-model="itemText" v-on:keyup.enter="onAdd">
+                <button v-on:click="onAdd">+</button>
+            </p>
+        </div>
+        
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    items: [],
+                    itemText: ''
+                },
+                created: function() {
+                    this.getItems();
+                    window.addEventListener('beforeunload', this.saveItems);
+                },
+                methods: {
+                    getItems: function() {
+                        this.items = JSON.parse(localStorage.getItem('todo-items') || "[]");
+                    },
+                    saveItems: function() {
+                        localStorage.setItem('todo-items', JSON.stringify(this.items));
+                    },
+                    onAdd: function() {
+                        if (this.itemText) {
+                            var date = new Date();
+                            this.items.push({
+                                id: date.getTime(),
+                                checked: false,
+                                text: this.itemText,
+                                date: date
+                            });
+                            this.itemText = '';
+                        }
+                    },
+                    onDelete: function(item, index) {
+                        this.items.splice(index, 1);
+                    }
+                }
+            });
+        </script>
+        
+    </body>
+</html>
