@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>File Upload</title>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+        <style>
+            body {
+                font-family: sans-serif;
+            }
+            section {
+                padding: 10px;
+                border: 1px solid silver;
+                max-width: 300px;
+                margin-bottom: 10px;
+            }
+        </style>
+
+    </head>
+    <body>
+
+        <section>
+            <b>HTML Upload</b><br><br>
+            <form method="post" action="upload.php" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <br><br>
+                <button type="submit">Upload</button>
+            </form>
+        </section>
+
+        <section>
+            <b>AJAX Upload</b><br><br>
+            <form id="ajaxForm">
+                <input type="file" name="file">
+                <br><br>
+                <button type="submit">Upload</button>
+            </form>
+            <script>
+                $('#ajaxForm').submit(function(event) {
+
+                    event.preventDefault();
+
+                    var form = this,
+                        fileInput = form.querySelector('input[type="file"]'),
+                        file = fileInput.files[0];
+
+                    if (!file) {
+                        return;
+                    }
+
+                    var formData = new FormData();
+                    formData.append('file', file);
+                    
+                    $.ajax({
+                        method: 'POST',
+                        url: 'upload.php',
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        complete: function(xhr, status) {
+                            console.log(xhr.responseText);
+                        }
+                    });
+
+                });
+            </script>
+        </section>
+
+    </body>
+</html>
