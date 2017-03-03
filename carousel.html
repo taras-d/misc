@@ -1,0 +1,293 @@
+<DOCTYPE html>
+<html>
+    <head>
+
+        <title>Carousel</title>
+
+        <style>
+
+            /** Carousel **/
+            .carousel {
+                position: relative;
+                border: 1px solid black;
+                max-width: 400px;
+                margin: 50px auto;
+                overflow: hidden;
+            }
+
+            /** Item **/
+            .items .item {
+                display: none;
+                position: relative;
+                width: 100%;
+                height: 250px;
+                transition: all 0.6s linear;
+                text-align: center;
+                font-family: sans-serif;
+                font-size: 26px;
+                font-weight: bold;
+                line-height: 250px;
+                color: gray;
+            }
+            .items .item:nth-child(1) {
+                background-color: #F8F8F8;
+            }
+            .items .item:nth-child(2) {
+                background-color: #F0F0F0;
+            }
+            .items .item:nth-child(3) {
+                background-color: #E8E8E8;
+            }
+            .items .item:nth-child(4) {
+                background-color: #E0E0E0;
+            }
+            .items .item:nth-child(5) {
+                background-color: #D8D8D8;
+            }
+
+            /** Active item **/
+            .items .item.active {
+                display: block;
+                left: 0;
+            }
+            .items .item.active.left {
+                left: -100%;
+            }
+            .items .item.active.right {
+                left: 100%;
+            }
+
+            /** Prev/Next item **/
+            .items .item.prev,
+            .items .item.next {
+                display: block;
+                position: absolute;
+                top: 0;
+            }
+            .items .item.prev {
+                left: -100%;
+            }
+            .items .item.next {
+                left: 100%;
+            }
+            .items .item.prev.right,
+            .items .item.next.left {
+                left: 0;
+            }
+
+            /** Paginator **/
+            .indicator {
+                position: absolute;
+                list-style-type: none;
+                width: 100%;
+                padding: 0 50px;
+                margin: 0;
+                bottom: 10px;
+                box-sizing: border-box;
+                text-align: center;
+            }
+            .indicator li {
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                box-sizing: border-box;
+                margin: 3px;
+                border: 1px solid gray;
+                border-radius: 100%;
+                cursor: pointer;
+            }
+            .indicator li.active {
+                background-color: gray;
+            }
+
+            /** Navigation **/
+            .navigation {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 40px;
+            }
+            .navigation .button {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 100%;
+                height: 50px;
+                background-color: silver;
+                opacity: 0.5;
+                text-align: center;
+                line-height: 50px;
+                font-size: 20px;
+                cursor: pointer;
+            }
+            .navigation .button:hover {
+                opacity: 1;
+            }
+            .navigation.left {
+                left: 0;
+            }
+            .navigation.right {
+                right: 0;
+            }
+
+        </style>
+
+    </head>
+    <body>
+
+        <div class="carousel">
+
+            <div class="items">
+                <div class="item active">slide 1</div>
+                <div class="item">slide 2</div>
+                <div class="item">slide 3</div>
+                <div class="item">slide 4</div>
+                <div class="item">slide 5</div>
+            </div>
+
+            <ul class="indicator">
+                <li class="active" onclick="jumpTo(0)"></li>
+                <li onclick="jumpTo(1)"></li>
+                <li onclick="jumpTo(2)"></li>
+                <li onclick="jumpTo(3)"></li>
+                <li onclick="jumpTo(4)"></li>
+            </ul>
+
+            <div class="navigation left">
+                <div class="button" onclick="prev()">&lt;</div>
+            </div>
+            <div class="navigation right">
+                <div class="button" onclick="next()">&gt;</div>
+            </div>
+
+        </div>
+
+
+        <script>
+
+            var carousel = document.querySelector('.carousel'),
+                items = carousel.querySelectorAll('.items .item'),
+                indicators = carousel.querySelectorAll('.indicator li');
+
+            var activeItem,
+                activeIndex,
+                prevItem,
+                nextItem;
+
+            var transitionInProgress = false;
+
+            function prev() {
+
+                if (transitionInProgress) {
+                    return;
+                }
+
+                selectActiveItem();
+
+                moveTo(
+                    activeIndex > 0? activeIndex - 1: items.length - 1,
+                    'backward'
+                );
+            }
+
+            function next() {
+
+                if (transitionInProgress) {
+                    return;
+                }
+
+                selectActiveItem();
+
+                moveTo(
+                    activeIndex < items.length - 1? activeIndex + 1: 0,
+                    'forward'
+                );
+            }
+
+            function jumpTo(index) {
+
+                if (transitionInProgress) {
+                    return;
+                }
+
+                selectActiveItem();
+
+                if (activeIndex === index) {
+                    return;
+                }
+
+                moveTo(
+                    index,
+                    index < activeIndex? 'backward': 'forward'
+                );
+            }
+
+            function selectActiveItem() {
+                activeItem = carousel.querySelector('.items .item.active');
+                activeIndex = Array.prototype.indexOf.call(items, activeItem);
+            }
+
+            function moveTo(index, direction) {
+
+                transitionInProgress = true;
+
+                activeItem.addEventListener('transitionend', activeItemTransitionEnd);
+
+                if (direction === 'backward') {
+
+                    prevItem = items[index];
+                    prevItem.classList.add('prev');
+
+                    // Wait until 'prev' class applied
+                    setTimeout(function() {
+                        activeItem.classList.add('right');
+                        prevItem.classList.add('right');
+                    }, 100);
+
+                } else if (direction === 'forward') {
+
+                    nextItem = items[index];
+                    nextItem.classList.add('next');
+
+                    // Wait until 'next' class applied
+                    setTimeout(function() {
+                        activeItem.classList.add('left');
+                        nextItem.classList.add('left');
+                    }, 100);
+
+                }
+
+                // Change active indicator
+                Array.prototype.forEach.call(indicators, function(indicator, indicatorIndex) {
+                    indicator.classList.toggle('active', indicatorIndex === index);
+                });
+
+                console.log('Move to index: ' + index);
+            }
+
+            function activeItemTransitionEnd() {
+
+                activeItem.removeEventListener('transitionend', activeItemTransitionEnd);
+
+                activeItem.classList.remove('active', 'left', 'right');
+
+                if (prevItem) {
+                    prevItem.classList.remove('prev', 'right');
+                    prevItem.classList.add('active');
+                    activeItem = prevItem;
+                } else if (nextItem) {
+                    nextItem.classList.remove('next', 'left');
+                    nextItem.classList.add('active');
+                    activeItem = nextItem;
+                }
+
+                prevItem = null;
+                nextItem = null;
+
+                transitionInProgress = false;
+            }
+
+        </script>
+
+    </body>
+</html>
