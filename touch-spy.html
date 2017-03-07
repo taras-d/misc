@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Touch spy</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                font-family: sans-serif;
+            }
+            h2 {
+                color: gray;
+                text-align: center;
+            }
+            svg {
+                display: block;
+                width: 500px;
+                height: 500px;
+                border: 1px solid gray;
+                margin: 0 auto;
+            }
+            svg polyline {
+                fill: none;
+                stroke: silver;
+                stroke-width: 4;
+            }
+        </style>
+    </head>
+    <body>
+
+        <h2>Touch spy</h2>
+
+        <svg></svg>
+
+        <script>
+            var svg = document.querySelector('svg'),
+                svgNS = 'http://www.w3.org/2000/svg',
+                svgRect = svg.getBoundingClientRect();
+
+            var points = [],
+                lastPoint;
+
+            var line,
+                linePoints,
+                lineStart,
+                lineEnd;
+
+            svg.addEventListener('touchstart', touchStart);
+            svg.addEventListener('touchmove', touchMove);
+            svg.addEventListener('touchend', touchEnd);
+            svg.addEventListener('touchcancel', touchCancel);
+
+            function touchStart(event) {
+                clear();
+                processTouchEvent(event);
+                renderLineStart();
+                renderLine();
+            }
+
+            function touchMove(event) {
+                processTouchEvent(event);
+                renderLine();
+            }
+
+            function touchEnd() {
+                renderLineEnd();
+            }
+
+            function touchCancel(event) {
+                console.log('cancel');
+            }
+
+            function processTouchEvent(event) {
+
+                let touch = event.targetTouches[0];
+
+                lastPoint = {
+                    x: touch.clientX - svgRect.left,
+                    y: touch.clientY - svgRect.top
+                };
+
+                points.push(lastPoint);
+            }
+
+            function clear() {
+
+                points = [];
+                lastPoint = null;
+
+                line = null;
+                linePoints = null;
+                lineStart = null;
+                lineEnd = null;
+
+                svg.innerHTML = '';
+            }
+
+            function renderLineStart() {
+                lineStart = document.createElementNS(svgNS, 'circle');
+                lineStart.setAttribute('r', 6);
+                lineStart.setAttribute('cx', lastPoint.x);
+                lineStart.setAttribute('cy', lastPoint.y);
+                lineStart.setAttribute('style', 'fill:#e8e8e8;stroke:silver;stroke-width:2;');
+                svg.appendChild(lineStart);
+            }
+
+            function renderLine() {
+                if (line) {
+                    linePoints += ' ' + lastPoint.x + ',' + lastPoint.y;
+                    line.setAttribute('points', linePoints);
+                } else {
+                    linePoints = lastPoint.x + ',' + lastPoint.y;
+                    line = document.createElementNS(svgNS, 'polyline');
+                    line.setAttribute('points', linePoints);
+                    svg.insertBefore(line, lineStart);
+                } 
+            }
+
+            function renderLineEnd() {
+                lineEnd = document.createElementNS(svgNS, 'circle');
+                lineEnd.setAttribute('r', 12);
+                lineEnd.setAttribute('cx', lastPoint.x);
+                lineEnd.setAttribute('cy', lastPoint.y);
+                lineEnd.setAttribute('style', 'fill:#e8e8e8;stroke:silver;stroke-width:2;');
+                svg.appendChild(lineEnd);
+            }
+        </script>
+
+    </body>
+</html>
