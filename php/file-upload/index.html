@@ -22,7 +22,7 @@
     <body>
 
         <section>
-            <b>HTML Upload</b><br><br>
+            <b>Form upload</b><br><br>
             <form method="post" action="upload.php" enctype="multipart/form-data">
                 <input type="file" name="file">
                 <br><br>
@@ -31,7 +31,18 @@
         </section>
 
         <section>
-            <b>AJAX Upload</b><br><br>
+            <b>Iframe upload</b><br><br>
+            <form method="post" action="upload.php" target="upload" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <br><br>
+                <button type="submit">Upload</button>
+            </form>
+            <br>
+            <iframe name="upload" style="border: 0; height: 40px; border: 1px dotted silver;"></iframe>
+        </section>
+
+        <section>
+            <b>Ajax upload</b><br><br>
             <form id="ajaxForm">
                 <input type="file" name="file">
                 <br><br>
