@@ -49,6 +49,7 @@
             .items .item.active {
                 display: block;
                 left: 0;
+                top: 0;
             }
             .items .item.active.left {
                 left: -100%;
@@ -57,21 +58,19 @@
                 left: 100%;
             }
 
-            /** Prev/Next item **/
-            .items .item.prev,
+            /** Next item **/
             .items .item.next {
                 display: block;
                 position: absolute;
                 top: 0;
             }
-            .items .item.prev {
+            .items .item.next.left {
                 left: -100%;
             }
-            .items .item.next {
+            .items .item.next.right {
                 left: 100%;
             }
-            .items .item.prev.right,
-            .items .item.next.left {
+            .items .item.next.in  {
                 left: 0;
             }
 
@@ -103,15 +102,9 @@
             /** Navigation **/
             .navigation {
                 position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 40px;
-            }
-            .navigation .button {
-                position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                width: 100%;
+                width: 40px;
                 height: 50px;
                 background-color: silver;
                 opacity: 0.5;
@@ -120,7 +113,7 @@
                 font-size: 20px;
                 cursor: pointer;
             }
-            .navigation .button:hover {
+            .navigation:hover {
                 opacity: 1;
             }
             .navigation.left {
@@ -153,12 +146,8 @@
                 <li onclick="jumpTo(4)"></li>
             </ul>
 
-            <div class="navigation left">
-                <div class="button" onclick="prev()">&lt;</div>
-            </div>
-            <div class="navigation right">
-                <div class="button" onclick="next()">&gt;</div>
-            </div>
+            <div class="navigation left" onclick="prev()">&lt;</div>
+            <div class="navigation right" onclick="next()">&gt;</div>
 
         </div>
 
@@ -169,10 +158,10 @@
                 items = carousel.querySelectorAll('.items .item'),
                 indicators = carousel.querySelectorAll('.indicator li');
 
-            var activeItem,
-                activeIndex,
-                prevItem,
-                nextItem;
+            var activeItem = carousel.querySelector('.items .item.active'),
+                activeIndex = 0,
+                nextItem,
+                nextIndex;
 
             var transitionInProgress = false;
 
@@ -182,11 +171,9 @@
                     return;
                 }
 
-                selectActiveItem();
-
                 moveTo(
                     activeIndex > 0? activeIndex - 1: items.length - 1,
-                    'backward'
+                    'right'
                 );
             }
 
@@ -196,11 +183,9 @@
                     return;
                 }
 
-                selectActiveItem();
-
                 moveTo(
                     activeIndex < items.length - 1? activeIndex + 1: 0,
-                    'forward'
+                    'left'
                 );
             }
 
@@ -209,8 +194,6 @@
                 if (transitionInProgress) {
                     return;
                 }
-
-                selectActiveItem();
 
                 if (activeIndex === index) {
                     return;
@@ -222,67 +205,56 @@
                 );
             }
 
-            function selectActiveItem() {
-                activeItem = carousel.querySelector('.items .item.active');
-                activeIndex = Array.prototype.indexOf.call(items, activeItem);
-            }
-
             function moveTo(index, direction) {
+
+                if (index === activeIndex) {
+                    return;
+                }
 
                 transitionInProgress = true;
 
                 activeItem.addEventListener('transitionend', activeItemTransitionEnd);
 
-                if (direction === 'backward') {
+                var activePos,
+                    nextPos;
 
-                    prevItem = items[index];
-                    prevItem.classList.add('prev');
-
-                    // Wait until 'prev' class applied
-                    setTimeout(function() {
-                        activeItem.classList.add('right');
-                        prevItem.classList.add('right');
-                    }, 100);
-
-                } else if (direction === 'forward') {
-
-                    nextItem = items[index];
-                    nextItem.classList.add('next');
-
-                    // Wait until 'next' class applied
-                    setTimeout(function() {
-                        activeItem.classList.add('left');
-                        nextItem.classList.add('left');
-                    }, 100);
-
+                if (direction === 'right') {
+                    activePos = 'right';
+                    nextPos = 'left';
+                } else if (direction == 'left') {
+                    activePos = 'left';
+                    nextPos = 'right';
                 }
 
-                // Change active indicator
-                Array.prototype.forEach.call(indicators, function(indicator, indicatorIndex) {
-                    indicator.classList.toggle('active', indicatorIndex === index);
-                });
+                nextIndex = index;
+                nextItem = items[nextIndex];
+                nextItem.classList.add('next', nextPos);
 
-                console.log('Move to index: ' + index);
+                // Wait until 'prev' class applied
+                setTimeout(function() {
+                    activeItem.classList.add(activePos);
+                    nextItem.classList.add('in');
+                }, 100);
             }
 
             function activeItemTransitionEnd() {
 
                 activeItem.removeEventListener('transitionend', activeItemTransitionEnd);
-
                 activeItem.classList.remove('active', 'left', 'right');
 
-                if (prevItem) {
-                    prevItem.classList.remove('prev', 'right');
-                    prevItem.classList.add('active');
-                    activeItem = prevItem;
-                } else if (nextItem) {
-                    nextItem.classList.remove('next', 'left');
-                    nextItem.classList.add('active');
-                    activeItem = nextItem;
-                }
+                nextItem.classList.remove('next', 'left', 'right', 'in');
+                nextItem.classList.add('active');
+                
+                activeItem = nextItem;
+                activeIndex = nextIndex;
 
-                prevItem = null;
                 nextItem = null;
+                nextIndex = null;
+
+                // Change active indicator
+                Array.prototype.forEach.call(indicators, function(indicator, indicatorIndex) {
+                    indicator.classList.toggle('active', indicatorIndex === activeIndex);
+                });
 
                 transitionInProgress = false;
             }
