@@ -8,7 +8,7 @@
             body {
                 font-family: sans-serif;
             }
-            h2 {
+            h3 {
                 color: gray;
                 text-align: center;
             }
@@ -28,7 +28,7 @@
     </head>
     <body>
 
-        <h2>Touch spy</h2>
+        <h3>Touch spy</h3>
 
         <svg></svg>
 
@@ -49,6 +49,10 @@
             svg.addEventListener('touchmove', touchMove);
             svg.addEventListener('touchend', touchEnd);
             svg.addEventListener('touchcancel', touchCancel);
+            
+            window.onscroll = function() {
+                svgRect = svg.getBoundingClientRect();
+            }
 
             function touchStart(event) {
                 clear();
