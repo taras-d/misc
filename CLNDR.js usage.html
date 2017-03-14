@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CLNDR.js usage</title>
+
+        <!-- jQuery -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+        <!-- Underscore -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+        <!-- Moment -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+
+        <!-- CLNDR -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/clndr/1.4.7/clndr.min.js"></script>
+
+        <style>
+
+            .calendar {
+                max-width: 280px;
+                font-family: sans-serif;
+                font-size: 15px;
+                text-align: center;
+                color: black;
+            }
+
+            /** Controls **/
+            .calendar .controls {
+                position: relative;
+                padding: 0 40px;
+                line-height: 40px;
+            }
+            .calendar .controls .next-month,
+            .calendar .controls .prev-month {
+                position: absolute;
+                top: 0;
+                height: 40px;
+                width: 40px;
+                background-color: gray;
+                color: white;
+                cursor: pointer;
+            }
+            .calendar .controls .next-month {
+                right: 0;
+            }
+            .calendar .controls .prev-month {
+                left: 0;
+            }
+            .calendar .controls .active-month {
+                background-color: silver;
+                color: white;
+            }
+
+            /** Month week days **/
+            .month .week-days {
+                padding: 0;
+                margin: 0;
+                list-style-type: none;
+                font-size: 12px;
+            }
+            .month .week-days:after {
+                content: "";
+                display: block;
+                clear: both;
+            }
+            .month .week-days li {
+                width: 40px;
+                line-height: 40px;
+                background-color: #e8e8e8;
+                float: left;
+                box-sizing: border-box;
+            }
+            .month .week-days li:not(:last-child) {
+                border-right: 1px solid white;
+            }
+
+            /* Month days */
+            .month .month-days .month-week:after {
+                content: "";
+                display: block;
+                clear: both;
+            }
+            .month .month-days .month-week .day {
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                float: left;
+                box-sizing: border-box;
+                border: 1px solid #e8e8e8;
+                border-left: 0;
+                border-top: 0;
+                cursor: pointer;
+            }
+            .month .month-days .month-week .day:hover {
+                font-weight: bold;
+            }
+            .month .month-days .month-week .day:first-child {
+                border-left: 1px solid #e8e8e8;
+            }
+            .month .month-days .month-week .day.adjacent-month span {
+                opacity: 0.2;
+            }
+
+        </style>
+
+    </head>
+    <body>
+
+        <div class="calendar"></div>
+
+        <script type="text/template" id="calendar-template">
+            <div class="controls">
+                <div class="prev-month">prev</div>
+                <div class="active-month"><%= month %> <%= year %></div>
+                <div class="next-month">next</div>
+            </div>
+            <div class="month">
+                <ul class="week-days">
+                    <% for(var i = 0; i < daysOfTheWeek.length; i++) { %>
+                    <li><%= daysOfTheWeek[i] %></li>
+                    <% } %>
+                </ul>
+                <div class="month-days">
+                    <% for(var i = 0; i < numberOfRows; i++){ %>
+                    <div class="month-week">
+                        <% for(var j = 0; j < 7; j++){ %><% var d = j + i * 7; %>
+                        <div class="<%= days[d].classes %>">
+                            <span><%= days[d].day %></span>
+                        </div>
+                        <% } %>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </script>
+
+        <script>
+
+            var calendarInstance = $('.calendar').clndr({
+                template: $('#calendar-template').html(),
+                daysOfTheWeek: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                targets: {
+                    nextButton: 'next-month',
+                    previousButton: 'prev-month'
+                },
+                clickEvents: {
+                    click: function(target) {
+                        console.log(target.date.format('YYYY-MM-DD'));
+                    }
+                }
+            });
+
+        </script>
+
+    </body>
+</html>
