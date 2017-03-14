@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Canvas - Flower</title>
+    </head>
+    <body>
+    
+        <canvas width="500" height="500" style="border: 1px dashed silver"></canvas>
+        
+        <script>
+        
+            var canvas = document.querySelector('canvas'),
+                ctx = canvas.getContext('2d');
+                
+            var centerX = canvas.width / 2,
+                centerY = canvas.height / 2;
+                
+            var size = 10,
+                offset = 0,
+                degree = 0,
+                colors = ['green', 'red', 'blue', 'darkorange'],
+                colorIndex = 0;
+
+            setInterval(function() {
+            
+                ctx.save();
+            
+                ctx.translate(centerX, centerY);
+                ctx.rotate(degree * Math.PI / 180);
+            
+                ctx.beginPath();
+                ctx.strokeStyle = colors[colorIndex];
+                ctx.lineWidth = 2;
+                ctx.rect(offset, offset, size, size);
+                ctx.stroke();
+                
+                ctx.restore();
+                
+                if (offset < 100) {
+                    offset += 1;
+                    size += 1;
+                    degree += 30;
+                } else {
+                    offset = 0;
+                    size = 10;
+                    degree = 0;
+                    colorIndex = colorIndex < colors.length - 1? colorIndex + 1: 0;
+                }
+            
+            }, 10);
+        
+        </script>
+    
+    </body>
+</html>
