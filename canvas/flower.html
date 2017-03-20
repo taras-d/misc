@@ -12,43 +12,84 @@
             var canvas = document.querySelector('canvas'),
                 ctx = canvas.getContext('2d');
                 
-            var centerX = canvas.width / 2,
-                centerY = canvas.height / 2;
-                
-            var size = 10,
-                offset = 0,
-                degree = 0,
-                colors = ['green', 'red', 'blue', 'darkorange'],
-                colorIndex = 0;
+            function flower(
+                centerX,
+                centerY,
+                centerR,
+                centerStroke,
+                centerFill,
+                petalsCount,
+                petalCpWidth,
+                petalCpHeight,
+                petalStroke,
+                petalFill
+            ) {
 
-            setInterval(function() {
-            
                 ctx.save();
-            
+
+                // Move origin to the center of canvas 
                 ctx.translate(centerX, centerY);
-                ctx.rotate(degree * Math.PI / 180);
-            
-                ctx.beginPath();
-                ctx.strokeStyle = colors[colorIndex];
-                ctx.lineWidth = 2;
-                ctx.rect(offset, offset, size, size);
-                ctx.stroke();
-                
-                ctx.restore();
-                
-                if (offset < 100) {
-                    offset += 1;
-                    size += 1;
-                    degree += 30;
-                } else {
-                    offset = 0;
-                    size = 10;
-                    degree = 0;
-                    colorIndex = colorIndex < colors.length - 1? colorIndex + 1: 0;
+
+                // Petals
+                var centerLength = centerR * 2 * Math.PI,
+                    petalDegree = 360 / petalsCount,
+                    petalWidth = centerLength / petalsCount,
+                    petalHalfWidth = petalWidth / 2;
+
+                ctx.strokeStyle = petalStroke;
+                ctx.fillStyle = petalFill;
+
+                for (var i = 0; i < petalsCount; ++i) {
+                    ctx.rotate(petalDegree * Math.PI / 180);
+                    ctx.beginPath();
+                    ctx.moveTo(-petalHalfWidth, -centerR);
+                    ctx.bezierCurveTo(
+                        -(petalCpWidth / 2), -petalCpHeight - centerR,
+                        petalCpWidth / 2, -petalCpHeight - centerR,
+                        petalHalfWidth, -centerR
+                    );
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill();
                 }
-            
-            }, 10);
+
+                // Flower center
+                ctx.strokeStyle = centerStroke;
+                ctx.fillStyle = centerFill;
+                ctx.beginPath();
+                ctx.arc(0, 0, centerR, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.fill();
+
+                ctx.restore();
+            }
         
+            flower(
+                150,
+                150,
+                25,
+                '#b36b00',
+                '#ffa31a',
+                16,
+                75,
+                75,
+                '#800000',
+                '#ff1a1a'
+            );
+
+            flower(
+                350,
+                250,
+                20,
+                '#8a00e6',
+                '#cc80ff',
+                20,
+                60,
+                100,
+                '#8a00e6',
+                '#e0b3ff'
+            );
+
         </script>
     
     </body>

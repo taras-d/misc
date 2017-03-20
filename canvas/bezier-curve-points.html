@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>Canvas - Bezier curve points</title>
+
+        <style>
+
+            body {
+                font-family: sans-serif;
+            }
+
+            .canvas-wrap {
+                width: 500px;
+                height: 500px;
+                position: relative;
+            }
+
+            .point {
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                cursor: pointer;
+                border-radius: 100%;
+            }
+            .point.start {
+                background-color: green;
+            }
+            .point.control {
+                border-radius: 0;
+            }
+            .point.control.one {
+                background-color: violet;
+            }
+            .point.control.two {
+                background-color: orange;
+            }
+            .point.end {
+                background-color: deepskyblue;
+            }
+
+            .points-desc {
+                font-size: 14px;
+                margin-top: 15px;
+            }
+            .points-desc .point {
+                position: static;
+                display: inline-block;
+            }
+
+        </style>
+
+    </head>
+    <body>
+    
+        <div class="canvas-wrap">
+            <canvas width="500" height="500" style="border: 1px dashed silver"></canvas>
+            <div class="point start"></div>
+            <div class="point control one"></div>
+            <div class="point control two"></div>
+            <div class="point end"></div>
+        </div>
+
+        <div class="points-desc">
+            <span class="point start"></span> - start point<br>
+            <span class="point control one"></span> - control point 1<br>
+            <span class="point control two"></span> - control point 2<br>
+            <span class="point end"></span> - end point<br>
+        </div>
+        
+        <script>
+        
+            var wrap = document.querySelector('.canvas-wrap'),
+                wrapRect = wrap.getBoundingClientRect();
+
+            var canvas = document.querySelector('canvas'),
+                ctx = canvas.getContext('2d');
+
+            // Start point (green)
+            var sp = wrap.querySelector('.point.start'),
+                spx = 50,
+                spy = 100;
+
+            // Control point 1 (violet)
+            var cp1 = wrap.querySelector('.point.control.one'),
+                cp1x = 150,
+                cp1y = 100;
+
+            // Control point 2 (orange)
+            var cp2 = wrap.querySelector('.point.control.two'),
+                cp2x = 150,
+                cp2y = 400;
+            
+            // End point (blue)
+            var ep = wrap.querySelector('.point.end'),
+                epx = 50,
+                epy = 400;
+
+            var activePoint = null;
+
+            wrap.onmousemove = function(event) {
+
+                if (!activePoint) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                var x = event.clientX - wrapRect.left,
+                    y = event.clientY - wrapRect.top;
+
+                switch (activePoint) {
+
+                    case sp:
+                        spx = x;
+                        spy = y;
+                        break;
+
+                    case cp1:
+                        cp1x = x;
+                        cp1y = y;
+                        break;
+
+                    case cp2:
+                        cp2x = x;
+                        cp2y = y;
+                        break;
+
+                    case ep:
+                        epx = x;
+                        epy = y;
+                        break;
+                }
+
+                clear();
+                drawCurve();
+                showControlPoints();
+            }
+
+            window.onmouseup = function(event) {
+                activePoint = null;
+            }
+
+            sp.onmousedown = 
+            cp1.onmousedown = 
+            cp2.onmousedown = 
+            ep.onmousedown = function(e) { activePoint = e.currentTarget; }
+
+            function clear() {
+                ctx.clearRect(0, 0, 500, 500);
+            }
+
+            function drawCurve() {
+                ctx.beginPath();
+                ctx.moveTo(spx, spy);
+                ctx.bezierCurveTo(
+                    cp1x, cp1y,
+                    cp2x, cp2y,
+                    epx, epy
+                );
+                ctx.stroke();
+            }
+
+            function showControlPoints() {
+
+                sp.style.left = (spx - 5) + 'px';
+                sp.style.top = (spy - 5) + 'px';
+
+                cp1.style.left = (cp1x - 5) + 'px';
+                cp1.style.top = (cp1y - 5) + 'px';
+
+                cp2.style.left = (cp2x - 5) + 'px';
+                cp2.style.top = (cp2y - 5) + 'px';
+
+                ep.style.left = (epx - 5) + 'px';
+                ep.style.top = (epy - 5) + 'px';
+            }
+
+            drawCurve();
+            showControlPoints();
+
+        </script>
+    
+    </body>
+</html>
