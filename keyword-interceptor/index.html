@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Keyword Interceptor</title>
+        <script src="keyword-interceptor.js"></script>
+        <style>
+            body {
+                font-family: compy, monospace;
+                font-size: 16px;
+                background-color: #333;
+                color: lime;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div id="result">
+            <p>
+                Interceptor started<br>
+                Listening to keywords...
+            </p>
+        </div>
+
+        <script>
+
+            var result = document.getElementById('result');
+
+            var interceptor = new KeywordInterceptor({
+                keywords: {
+                    upupdown: '38,38,40',
+                    leavemealone: '76,69,65,86,69,77,69,65,76,79,78,69',
+                    aspirine: '65,83,80,73,82,73,78,69'
+                }
+            });
+            
+            interceptor.onkeyword = function(name) {
+                var p = document.createElement('p');
+                p.innerHTML = 'Keyword intercepted: <b>' + name + '</b>';
+                result.appendChild(p);
+            };
+            
+            interceptor.start();
+        
+        </script>
+    
+    </body>
+</head>
+    
