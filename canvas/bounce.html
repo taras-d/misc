@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Canvas - Bounce</title>
+    </head>
+    <body>
+    
+        <canvas width="500" height="500" style="border: 1px dashed silver"></canvas>
+        
+        <script>
+        
+            function rnd(min, max) {
+                return Math.floor( Math.random() * (max - min) ) + min;
+            }
+        
+            var canvas = document.querySelector('canvas'),
+                ctx = canvas.getContext('2d');
+                
+            var r = 25,
+                x = rnd(r, canvas.width - r),
+                y = rnd(r, canvas.height - r),
+                dx = 4,
+                dy = 4;
+                
+            setInterval(function() {
+            
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.beginPath();
+                ctx.arc(x, y, r, 0, 2 * Math.PI);
+                ctx.stroke();
+                
+                // Left border
+                if (x - r < 0) {
+                    dx = -dx;
+                }
+                
+                // Right  border
+                if (x + r > canvas.width) {
+                    dx = -dx;
+                }
+                
+                // Top border
+                if (y - r < 0) {
+                    dy = -dy;
+                }
+                
+                // Bottom border
+                if (y + r > canvas.height) {
+                    dy = -dy;
+                }
+                
+                x += dx;
+                y += dy;
+            
+            }, 1000 / 60);
+
+        </script>
+    
+    </body>
+</html>
