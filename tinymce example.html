@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Editor</title>
+
+        <!-- TinyMCE -->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.5.6/tinymce.min.js'></script>
+
+        <style>
+            body {
+                font-family: sans-serif;
+            }
+            .editor-wrap {
+                max-width: 800px;
+                margin-bottom: 25px;
+            }
+            .preview {
+                max-width: 800px;
+                box-sizing: border-box;
+                border: 1px solid silver;
+                padding: 10px;
+            }
+            .preview p {
+                margin: 0;
+            }
+        </style>
+
+    </head>
+    <body>
+
+        <b>TinyMCE</b>
+        <div class="editor-wrap">
+            <div class="editor">
+                <i>Content</i>
+            </div>
+        </div>
+
+        <b>Preview</b>
+        <div class="preview"></div>
+
+        <script>
+
+            var editorEl = document.querySelector('.editor'),
+                previewEl = document.querySelector('.preview'),
+                editor;
+
+            tinymce.init({
+                target: editorEl,
+                menubar: false,
+                toolbar: 'undo redo | formatselect | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | clear',
+                statusbar: false,
+                plugins: 'advlist lists',
+                content_style: 'p { margin: 0; }',
+                advlist_bullet_styles: '',
+                advlist_number_styles: '',
+                height: 200,
+                setup: function(e) {
+                    editor = e;
+                    editor.addButton('clear', {
+                        text: 'Clear',
+                        title: 'Clear',
+                        onclick: function() {
+                            if (!editor.getContent()) {
+                                return;
+                            }
+                            editor.undoManager.add();
+                            editor.setContent('');
+                            editor.undoManager.add();
+                            editor.fire('change');
+                        }
+                    });
+                    editor.on('undo redo change keyup', function() {
+                        previewEl.innerHTML = editor.getContent();
+                    });
+                    editor.on('init', function() {
+                        console.log('init');
+                    });
+                }
+            });
+
+        </script>
+
+    </body>
+</html>
