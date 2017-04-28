@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+
+    <title>SignalR client</title>
+    
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- SignalR core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signalr.js/2.2.1/jquery.signalR.min.js"></script>
+
+    <!-- Generated proxy -->
+    <script src="http://localhost:49738/signalr/hubs"></script>
+
+</head>
+<body>
+
+    <script>
+
+        function withProxy() {
+
+            var connection = $.connection.hub;
+            connection.url = 'http://localhost:49738/signalr';
+            connection.qs = { token: 'FAKE_TOKEN' };
+
+            var echoHub = $.connection.echoHub;
+
+            // Define client method
+            echoHub.client.newMessage = function(msg) {
+                console.log('Message: ' + msg);
+            }
+
+            // Connect
+            connection.start().done(function() {
+
+                console.log('Connected. ID: ' + connection.id);
+
+                // Call server method
+                echoHub.server.ping().done(function(res) {
+                    console.log(res);
+                });
+
+            }).fail(function() { console.log('Connection failed'); });
+        }
+
+        function withoutProxy() {
+
+            var connection = $.hubConnection();
+            connection.url = 'http://localhost:49738/signalr';
+            connection.qs = { token: 'FAKE_TOKEN' };
+
+            var echoHub = connection.createHubProxy('echoHub');
+
+            // Define client method
+            echoHub.on('newMessage', function(msg) {
+                console.log('Message: ' + msg);
+            });
+
+            // Connect
+            connection.start().done(function() {
+
+                console.log('Connected. ID: ' + connection.id);
+
+                // Call server method
+                echoHub.invoke('ping').done(function(res) {
+                    console.log(res);
+                });
+
+            }).fail(function () { console.log('Connection failed'); });
+        }
+
+    </script>
+
+</body>
+</html>
