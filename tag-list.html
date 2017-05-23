@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tag list</title>
+
+        <style>
+            .tag-list {
+                border: 1px solid silver;
+                max-width: 600px;
+                padding: 4px;
+                font-family: monospace;
+            }
+            .tag-list .tag {
+                position: relative;
+                margin: 2px;
+                display: inline-block;
+                padding: 2px 6px;
+                padding-right: 20px;
+                background-color: #e8e8e8;
+                color: #333;
+                cursor: default;
+                word-break: break-all;
+            }
+            .tag-list .tag .tag-remove {
+                position: absolute;
+                top: 2px;
+                right: 2px;
+                width: 14px;
+                height: 14px;
+                line-height: 14px;
+                text-align: center;
+                cursor: pointer;
+                color: gray;
+            }
+            .tag-list .tag .tag-remove:hover {
+                background-color: silver;
+                color: #333;
+            }
+            .tag-input {
+                border: 0;
+                outline: 0;
+                width: 150px;
+                margin: 2px;
+                display: none;
+                padding: 2px;
+            }
+        </style>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    </head>
+    <body>
+
+        <div id="my-tags"></div>
+
+        <script>
+
+            class TagList {
+
+                constructor($el, tags) {
+
+                    this.tags = tags || [];
+                    this.mouseEnter = false;
+
+                    this.$el = $($el);
+                    this.$tagList = null;
+                    this.$tagInput = null;
+
+                    this.onTagListClick = this.onTagListClick.bind(this);
+                    this.onTagListMouseEnter = this.onTagListMouseEnter.bind(this);
+                    this.onTagListMouseLeave = this.onTagListMouseLeave.bind(this);
+                    this.onTagInputBlur = this.onTagInputBlur.bind(this);
+                    this.onTagInputKeyDown = this.onTagInputKeyDown.bind(this);
+
+                    this.render();
+                }
+
+                render() {
+                    this.renderTagList();
+                    this.renderTagInput();
+                    this.renderTags();
+                }
+
+                renderTagList() {
+                    this.$tagList = $('<div>', {
+                        class: 'tag-list',
+                        on: {
+                            click: this.onTagListClick,
+                            mouseenter: this.onTagListMouseEnter,
+                            mouseleave: this.onTagListMouseLeave
+                        }
+                    }).appendTo(this.$el);
+                }
+
+                renderTagInput() {
+                    this.$tagInput = $('<input>', {
+                        class: 'tag-input',
+                        on: {
+                            blur: this.onTagInputBlur,
+                            keydown: this.onTagInputKeyDown
+                        },
+                        attr: {
+                            placeholder: 'Enter tag'
+                        }
+                    }).appendTo(this.$tagList);
+                }
+
+                renderTags() {
+
+                    this.$tagList.find('.tag').remove();
+
+                    this.tags.forEach((tag, tagIndex) => {
+                        let el = $('<div>', {
+                            class: 'tag',
+                            text: tag,
+                        });
+                        el.append($('<div>', {
+                            class: 'tag-remove',
+                            text: 'x',
+                            on: {
+                                click: this.onTagRemove.bind(this, tagIndex)
+                            }
+                        }));
+                        el.insertBefore(this.$tagInput);
+                    });
+
+                    if (this.tags.length === 0) {
+                        this.$tagInput.show();
+                    }
+                }
+
+                onTagListClick() {
+                    this.$tagInput.show().focus();
+                }
+
+                onTagListMouseEnter() {
+                    this.mouseEnter = true;
+                }
+
+                onTagListMouseLeave() {
+                    this.mouseEnter = false;
+                }
+
+                onTagInputBlur() {
+                    if (!this.mouseEnter && this.tags.length > 0) {
+                        this.$tagInput.hide();
+                    }
+                    this.addTag(this.$tagInput.val());
+                }
+
+                onTagInputKeyDown(e) {
+                    switch (e.which) {
+                        case 13: // Enter
+                            this.addTag(this.$tagInput.val());
+                            break;
+                        case 8: // Backspace
+                            if (!this.$tagInput.val() && this.tags.length > 0) {
+                                this.removeTag(this.tags.length - 1);
+                            }
+                            break;
+                    }
+                }
+
+                onTagRemove(tagIndex, event) {
+                    event.stopPropagation();
+                    this.removeTag(tagIndex);
+                }
+
+                addTag(text) {
+                    text = text.trim();
+                    if (text) {
+                        this.$tagInput.val('');
+                        this.tags.push(text);
+                        this.renderTags();
+                    }
+                }
+
+                removeTag(tagIndex) {
+                    this.tags.splice(tagIndex, 1);
+                    this.renderTags();
+                }
+
+            }
+
+            let tagList = new TagList('#my-tags', [
+                'Tag 1', 'Tag 2', 'Tag 3'
+            ]);
+
+        </script>
+
+    </body>
+</html>
