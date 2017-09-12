@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Detect AdBlock</title>
+    </head>
+    <body>
+
+        <script>
+
+            function isAdBlockActive() {
+                return fetch('advertisement.js').then(() => false).catch(() => true);
+            }
+
+            isAdBlockActive().then(active => {
+                document.getElementById('status').innerHTML = active? '<span style="color: red">AdBlock active</span>': 'AdBlock inactive';
+            });
+
+        </script>
+
+        <div id="status"><i>Please wait...</i></div>
+
+    </body>
+</html>
