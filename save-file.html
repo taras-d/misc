@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Save File</title>
+        <style> 
+            body {
+                font-family: monospace;
+            }
+            textarea {
+                width: 300px;
+                height: 150px;
+                resize: none;
+            }
+        </style>
+    </head>
+    <body>
+
+        <textarea id="content" placeholder="File content"></textarea><br>
+        <button id="download">Download</button>
+
+        <script>
+            
+            const content = document.getElementById('content'),
+                download = document.getElementById('download');
+
+            download.onclick = () => {
+                
+                const file = new Blob([content.value], { type: 'text/html' }),
+                    a = document.createElement('a');
+
+                a.href = URL.createObjectURL(file);
+                a.download = `${new Date().getTime()}.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+            };
+
+        </script>
+
+    </body>
+</html>
