@@ -1,29 +1,29 @@
+// Transpose Matrix
+// https://en.wikipedia.org/wiki/Transpose
+
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 using namespace std;
 
-void splitString(string str, vector<string>& target);
-void readMatrix(string fileName, vector<vector<string>>& target);
-void writeTransposeMatrix(string fileName, vector<vector<string>>& matrix);
-
-// Transpose Matrix
-// https://en.wikipedia.org/wiki/Transpose
+void splitString(const string str, vector<string>& target);
+void readMatrix(const string fileName, vector<vector<string>>& target);
+void writeTransposeMatrix(const string fileName, vector<vector<string>>& matrix);
 
 int main() {
   vector<vector<string>> matrix;
 
   readMatrix("matrix.txt", matrix);
 
-  writeTransposeMatrix("transposedMarix.txt", matrix);
+  writeTransposeMatrix("transposeMarix.txt", matrix);
 
   return 0;
 }
 
-// Split line into array of numbers
+// Split line into numbers and store result in vector
 // Example: "1,2,3" => {"1", "2", "3"}
-void splitLine(string line, vector<string>& result) {
+void splitLine(const string line, vector<string>& result) {
   string num; 
   int start = 0;
   int comma_index;
@@ -40,8 +40,8 @@ void splitLine(string line, vector<string>& result) {
   } while (comma_index != -1);
 }
 
-// Read matrix from file and store in result vector
-void readMatrix(string fileName, vector<vector<string>>& result) {
+// Read matrix from file and store result in vector
+void readMatrix(const string fileName, vector<vector<string>>& result) {
   ifstream input_file(fileName);
   string line;
 
@@ -53,7 +53,7 @@ void readMatrix(string fileName, vector<vector<string>>& result) {
 }
 
 // Transpose matrix and write into file
-void writeTransposeMatrix(string fileName, vector<vector<string>>& matrix) {
+void writeTransposeMatrix(const string fileName, vector<vector<string>>& matrix) {
   ofstream file(fileName);
 
   int rowsNum = matrix.size();
